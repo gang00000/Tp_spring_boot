@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Blog</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Accueil</a></li>
+            <li class="breadcrumb-item active">Blog</li>
+        </ol>
+    </nav>
+
+    <h1>Articles du Blog</h1>
+
+    <!-- Flash messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <h3>Publier un Article</h3>
+            <form th:action="@{/blog/add}" th:object="${newArticle}" method="post" class="card p-3">
+                <div class="mb-3">
+                    <label class="form-label">Titre <span class="text-danger">*</span></label>
+                    <input type="text" th:field="*{title}"
+                           th:class="${#fields.hasErrors('title')} ? 'form-control is-invalid' : 'form-control'">
+                    <div class="invalid-feedback" th:errors="*{title}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Contenu <span class="text-danger">*</span></label>
+                    <textarea th:field="*{content}" rows="5"
+                              th:class="${#fields.hasErrors('content')} ? 'form-control is-invalid' : 'form-control'"></textarea>
+                    <div class="invalid-feedback" th:errors="*{content}"></div>
+                </div>
+                <button type="submit" class="btn btn-success">Publier</button>
+            </form>
+        </div>
+        <div class="col-md-8">
+            <div th:each="a : ${articles}" class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${a.title}"></h5>
+                    <p class="card-text" th:text="${#strings.abbreviate(a.content, 150)}"></p>
+                    <div class="d-flex gap-2">
+                        <a th:href="@{'/blog/' + ${a.id}}" class="btn btn-outline-primary btn-sm">Lire la suite</a>
+                        <form th:action="@{'/blog/' + ${a.id} + '/delete'}" method="post" class="d-inline"
+                              onsubmit="return confirm('Supprimer cet article ?')">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
